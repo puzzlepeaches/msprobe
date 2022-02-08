@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "msprobe"
+version = "0.1.0"
+description = "All things recon for self-hosted Microsoft applications."
+authors = ["ed <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+click = "^8.0.3"
+rich = "^11.1.0"
+logger = "^1.4"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
