@@ -7,10 +7,10 @@ from .exch import *
 # @click.option('--config', '-C', type=click.Path(exists=True), help='Path to an optional configuration file.')
 # @click.option('--dump-config', '-dc', is_flag=True, help='Dump the effective configuration used.')
 @click.help_option('--help', '-h')
-@click.option('--user-agent', '-u', help='The User-Agent to use (Otherwise uses "msprobe/1.0.1").')
+@click.option('--user-agent', '-u', help='The User-Agent to use (Optional)', default="msprobe/1.0.1")
 @click.option('--verbose', '-v', is_flag=True, help="Enables debugging information.")
-@click.option('--target', '-t', is_flag=True, help="Target apex domain.")
-@click.option('--target-file', '-tf', is_flag=True, help="File of target apex domains.")
+@click.option('--target', '-t', help="Target apex domain.")
+@click.option('--target-file', '-tf', type=click.File('rw'), help="File of target apex domains.")
 
 def cli(user_agent, verbose, target, target_file):
 
