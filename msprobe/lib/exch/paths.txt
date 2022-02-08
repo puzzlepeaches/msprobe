@@ -1,0 +1,6 @@
+ews
+mapi
+oab
+rpc
+autodiscover/autodiscover.xml
+Microsoft-Server-ActiveSync
