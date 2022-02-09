@@ -1,40 +1,45 @@
-import click
+import fire
+from rich.console import Console
 import logging
-from .exch import *
+from .exch.exch import *
 
-# Defining module independent options
-@click.group()
-# @click.option('--config', '-C', type=click.Path(exists=True), help='Path to an optional configuration file.')
-# @click.option('--dump-config', '-dc', is_flag=True, help='Dump the effective configuration used.')
-@click.help_option('--help', '-h')
-@click.option('--user-agent', '-u', help='The User-Agent to use (Optional)', default="msprobe/1.0.1")
-@click.option('--verbose', '-v', is_flag=True, help="Enables debugging information.")
-@click.option('--target', '-t', help="Target apex domain.")
-@click.option('--target-file', '-tf', type=click.File('rw'), help="File of target apex domains.")
+console = Console()
 
-def cli(user_agent, verbose, target, target_file):
-
-    # Doing checks to ensure all TLV are defined correctly
-
-    # Enabling verbose logging information
-    if verbose:
-        logging.basicConfig(level=logging.DEBUG)
-
-    # Setting user-agent for requests
-    if not user_agent:
-        user_agent = "msprobe/1.0.1"
+def exch(target):
     
-    # Ensuring that a target is specified on runtime
-    if target is None and target_file is None:
-        logging.error('No target specified.')
-        click.secho('No target specified. Exiting!', fg='red')
-        exit()
+    # Setting up our console logging
+    with console.status("[bold green]Exchange Module Executing...") as status:
 
-# Exchange discovery sub-command
-@cli.group()
-def exch():
-    pass
+        # First trying to find if an Exchange server exists
+        exch_endpoint = find(target)
+        
 
+        # Did we find anything
+        if exch_endpoint is not None:
 
-if __name__ == '__main__':
-    cli()
+            # Checking if OWA and ECP exist
+            owa_exists = find_owa(exch_endpoint) 
+            ecp_exists = find_ecp(exch_endpoint)
+
+            # Getting current Exchange version
+            exch_version = find_version(exch_endpoint, owa_exists, ecp_exists)
+
+            # Getting NTLM endpoint information
+            ntlm_paths = ntlm_pathfind(exch_endpoint)
+            ntlm_info = ntlm_parse(ntlm_paths)
+
+            status.stop()
+
+            display(exch_endpoint, owa_exists, ecp_exists, exch_version, ntlm_paths, ntlm_info)
+
+        else:
+
+            # Logging a failure if no Exchange instance found
+            console.log(f'Exchange not found: {target}', style='bold red')
+            status.stop()
+
+#if __name__ == '__main__':
+#    fire.Fire()
+
+def main():
+    fire.Fire()

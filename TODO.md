@@ -1,0 +1,5 @@
+- Deal with exch and other module import issues
+- Figure out fire library to handle file or single target
+- Create logic for single library function
+- Make sure package creation on the right path
+- Simplify internal functions where possible
