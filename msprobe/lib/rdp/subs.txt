@@ -1,0 +1,12 @@
+rdp
+rdpweb
+rdweb
+rdsh
+extranet
+remote
+tsweb
+remoteapps
+remoteapp
+ra
+desktop
+rds

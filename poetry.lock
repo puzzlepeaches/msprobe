@@ -75,6 +75,14 @@ six = "*"
 termcolor = "*"
 
 [[package]]
+name = "hashlib"
+version = "20081119"
+description = "Secure hash and message digest algorithm library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "idna"
 version = "3.3"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -172,7 +180,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "1b52d3f95ddb298c0df48d268e29ea5c1f832e13c4364838477a324118690c3d"
+content-hash = "4ce4795bb5b61741c8819c46ff217b88683daccadf88b823ac5a6cdb0b5f25a4"
 
 [metadata.files]
 beautifulsoup4 = [
@@ -200,6 +208,10 @@ commonmark = [
 ]
 fire = [
     {file = "fire-0.4.0.tar.gz", hash = "sha256:c5e2b8763699d1142393a46d0e3e790c5eb2f0706082df8f647878842c216a62"},
+]
+hashlib = [
+    {file = "hashlib-20060408a.win32-py2.4-openssl.exe", hash = "sha256:6ece4dbc12a71cd24793e5a06ba72f0ee0142affea6593842e5520f400ec9dbb"},
+    {file = "hashlib-20081119.zip", hash = "sha256:419de2fd10ae71ed9c6adcb55903f116abd1d8acc8c814dfd5f839b4d5013e38"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
