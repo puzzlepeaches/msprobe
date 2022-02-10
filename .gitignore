@@ -129,3 +129,5 @@ dmypy.json
 
 # TODO.md
 TODO.md
+
+*.swp
