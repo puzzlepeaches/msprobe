@@ -31,6 +31,7 @@ def exch(target):
 
             status.stop()
 
+            # Displaying info we found
             exch_display(exch_endpoint, owa_exists, ecp_exists, exch_version, exch_ntlm_paths, exch_ntlm_info)
 
         else:
@@ -46,7 +47,7 @@ def rdp(target):
     # Setting up our console logging
     with console.status("[bold green]RD Web Module Executing...") as status:
 
-        # First trying to find if an Exchange server exists
+        # First trying to find if an RD Web server exists
         rdpw_endpoint = rdpw_find(target)
         
 
@@ -67,11 +68,12 @@ def rdp(target):
             
             status.stop()
 
+            # Displaying what we found
             rdpw_display(rdpw_endpoint, rdpw_version, rdpw_info, rdpw_ntlm_path, rdpw_ntlm_info)
 
         else:
 
-            # Logging a failure if no Exchange instance found
+            # Logging a failure if no RD Web instance found
             console.log(f'RD Web not found: {target}', style='bold red')
             status.stop()
 
