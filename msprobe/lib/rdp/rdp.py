@@ -14,7 +14,7 @@ try:
 except Exception:
     pass
 
-def find(target):
+def rdpw_find(target):
 
     # Reading in potential subdomains
     sd = [line.strip() for line in open("lib/rdp/subs.txt")]
@@ -44,7 +44,7 @@ def find(target):
 
 # Find the installed version of RD Web Access
 # Largely pulled from here https://github.com/p0dalirius/RDWArecon
-def find_version(url):
+def rdpw_find_version(url):
 
     # Defining image hashes cooresponding with the version of windows server running
     known_hashes = {
@@ -87,7 +87,7 @@ def find_version(url):
 
 # Getting information about the RD Web portal embedded in the login page
 # Largely pulled from here https://github.com/p0dalirius/RDWArecon
-def get_info(url):
+def rdpw_get_info(url):
 
     # Defining possible language values
     langs = ["de-DE", "en-GB", "en-US", "es-ES", "fr-FR", "it-IT", "ja-JP", "mk-MK", "nl-NL", "pt-BR", "ru-RU", "tr-TR"]
@@ -146,7 +146,7 @@ def get_info(url):
             pass
 
 
-def ntlm_pathfind(url):
+def rdpw_ntlm_pathfind(url):
     url = f'{url}/rpc'
 
     try:
@@ -157,7 +157,7 @@ def ntlm_pathfind(url):
           if response.status_code == 401:
               return True
 
-def ntlm_parse(url):
+def rdpw_ntlm_parse(url):
 
     # Defining array to store NTLM information
     ntlm_data = []
@@ -175,20 +175,21 @@ def ntlm_parse(url):
     except Exception as a:
         print(f'Error occured: {a}')
 
+def rdpw_display(rdpw_endpoint, rdpw_version, rdpw_info, rdpw_ntlm_path, rdpw_ntlm_info):
+    console = Console()
+    table_rdpw = Table(show_header=False, pad_edge=True)
+    table_rdpw.add_column("Context")
+    table_rdpw.add_column("Info")
 
-# url = find(target)
-# version = find_version(url)
-# info = get_info(url)
-# rpc = ntlm_pathfind(url)
-# ntlm = ntlm_parse(url)
-# 
-# print(f'RDWEB URL: {url}')
-# print(f'OS Version: {version}')
-# print(f'NTLM Availible: {rpc}')
-# 
-# print(f'DOMAIN: {ntlm[0]}')
-# print(f'HOSTNAME: {ntlm[1]}')
-# print(f'FQDN: {ntlm[2]}')
-# 
-# for i,k in zip(info[0::2], info[1::2]):
-#     print(f'{i}: {k}')
+    table_rdpw.add_row('URL', f'{rdpw_endpoint}')
+    table_rdpw.add_row('VERSION', f'{rdpw_version}')
+
+    table_rdpw.add_row('DOMAIN', f'{rdpw_ntlm_info[0]}')
+
+    if rdpw_ntlm_path is True:
+        table_rdpw.add_row('NTLM RPC', 'True')
+
+    for i,k in zip(rdpw_info[0::2], rdpw_info[1::2]):
+         table_rdpw.add_row(f'{i}', f'{k}')
+
+    console.print(table_rdpw)

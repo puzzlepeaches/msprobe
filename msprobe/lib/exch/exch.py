@@ -15,7 +15,7 @@ except Exception:
     pass
 
 # Finding instances of target application 
-def find(target):
+def exch_find(target):
 
     # Reading in potential subdomains
     sd = [line.strip() for line in open("lib/exch/subs.txt")]
@@ -99,7 +99,7 @@ def find_version(exch_endpoint, owa, ecp):
         exchange_version = "UNKOWN"
         return exchange_version
 
-def ntlm_pathfind(exch_endpoint):
+def exch_ntlm_pathfind(exch_endpoint):
 
     # Reading in list of potential Exchange NTLM authentication endpoints
     np = [line.strip() for line in open("lib/exch/paths.txt")]
@@ -123,7 +123,7 @@ def ntlm_pathfind(exch_endpoint):
 
     return ntlm_endpoints
 
-def ntlm_parse(ntlm_endpoints):
+def exch_ntlm_parse(ntlm_endpoints):
 
     # Defining array to store NTLM information
     ntlm_data = []
@@ -145,7 +145,7 @@ def ntlm_parse(ntlm_endpoints):
         print(f'Error Message: {a}')
         pass
 
-def display(exch_endpoint, owa_exists, ecp_exists, exch_version, ntlm_paths, ntlm_info):
+def exch_display(exch_endpoint, owa_exists, ecp_exists, exch_version, exch_ntlm_paths, exch_ntlm_info):
     
 
     console = Console()
@@ -167,9 +167,9 @@ def display(exch_endpoint, owa_exists, ecp_exists, exch_version, ntlm_paths, ntl
     elif owa_exists == False:
        table_exch.add_row('EAC', 'FALSE')
 
-    table_exch.add_row('DOMAIN', f'{ntlm_info[0]}')
+    table_exch.add_row('DOMAIN', f'{exch_ntlm_info[0]}')
 
-    paths = "\n".join(item for item in ntlm_paths)
+    paths = "\n".join(item for item in exch_ntlm_paths)
     table_exch.add_row('URLS ', f'{paths}')
 
     console.print(table_exch)
