@@ -3,6 +3,7 @@ from rich.console import Console
 import logging
 from .exch.exch import *
 from .rdp.rdp import *
+from .adfs.adfs import *
 
 console = Console()
 
@@ -75,6 +76,48 @@ def rdp(target):
 
             # Logging a failure if no RD Web instance found
             console.log(f'RD Web not found: {target}', style='bold red')
+            status.stop()
+
+
+def adfs (target):
+    
+    # Setting up our console logging
+    with console.status("[bold green]ADFS Module Executing...") as status:
+
+        # First trying to find if an ADFS server exists
+        adfs_endpoint = adfs_find(target)
+        
+
+        # Did we find anything
+        if adfs_endpoint is not None:
+
+            # Getting the instance version 
+            adfs_version = adfs_find_version(adfs_endpoint)
+
+            # Getting information about ADFS services
+            adfs_services = adfs_find_services(adfs_endpoint) 
+
+            # Getting information about self-service pw reset endpoint
+            adfs_pwreset = find_adfs_pwreset(adfs_endpoint)
+
+
+            # Getting NTLM endpoint information
+            adfs_ntlm_paths = adfs_ntlm_pathfind(adfs_endpoint)
+            if len(adfs_ntlm_paths) != 0: 
+                adfs_ntlm_data = adfs_ntlm_parse(adfs_ntlm_paths)
+            else:
+                adfs_ntlm_data = []
+            
+            status.stop()
+
+            # Displaying what we found
+
+            adfs_display(adfs_endpoint, adfs_version, adfs_services, adfs_pwreset, adfs_ntlm_paths, adfs_ntlm_data)
+
+        else:
+
+            # Logging a failure if no RD Web instance found
+            console.log(f'ADFS not found: {target}', style='bold red')
             status.stop()
 
 
