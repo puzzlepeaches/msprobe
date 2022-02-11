@@ -248,13 +248,3 @@ def adfs_display(adfs_endpoint, adfs_version, adfs_services, adfs_pwreset, adfs_
         table_adfs.add_row('SERVICES', f'{services}')
 
     console.print(table_adfs)
-             
-
-# target = 'uww.edu'
-# adfs_endpoint = adfs_find(target)
-# version = adfs_find_version(adfs_endpoint)
-# adfs_services = adfs_find_services(adfs_endpoint)
-# reset = adfs_pwreset(adfs_endpoint)
-# adfs_ntlm_paths = adfs_ntlm_pathfind(adfs_endpoint)
-# ntlm_info = adfs_ntlm_parse(adfs_ntlm_paths)
-# 
