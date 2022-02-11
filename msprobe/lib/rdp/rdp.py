@@ -185,6 +185,7 @@ def rdpw_display(rdpw_endpoint, rdpw_version, rdpw_info, rdpw_ntlm_path, rdpw_nt
     table_rdpw.add_row('VERSION', f'{rdpw_version}')
 
     table_rdpw.add_row('DOMAIN', f'{rdpw_ntlm_info[0]}')
+    table_rdpw.add_row('HOSTNAME', f'{rdpw_ntlm_info[1]}')
 
     if rdpw_ntlm_path is True:
         table_rdpw.add_row('NTLM RPC', 'True')
