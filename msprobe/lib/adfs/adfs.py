@@ -191,9 +191,6 @@ def adfs_ntlm_pathfind(adfs_endpoint):
 
 # Parsing data from found NTLM authentication endpoints
 def adfs_ntlm_parse(adfs_ntlm_paths):
-
-    # Defining empty array to store information 
-    # ntlm_data = []
     
     try:
         ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
@@ -234,8 +231,6 @@ def adfs_display(adfs_endpoint, adfs_version, adfs_services, adfs_pwreset, adfs_
 
     if adfs_ntlm_data is not None: 
         table_adfs.add_row('DOMAIN', f'{adfs_ntlm_data}')
-    #if len(adfs_ntlm_data) != 0: 
-    #    table_adfs.add_row('DOMAIN', f'{adfs_ntlm_data[0]}')
 
     if len(adfs_services) > 10:
         print('Service list > 10')
