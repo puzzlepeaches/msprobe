@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
+import pkg_resources
 
 
 # Dealing with SSL Warnings
@@ -19,7 +20,8 @@ except Exception:
 def adfs_find(target):
 
     # Reading in potential subdomains
-    sd = [line.strip() for line in open("lib/adfs/subs.txt")]
+    resource = pkg_resources.resource_filename(__name__, 'subs.txt')
+    sd = [line.strip() for line in open(resource)]
 
     for i in sd:
 
@@ -51,7 +53,7 @@ def adfs_find_version(adfs_endpoint):
 
     try:
         # Issuing request to URL
-        response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -90,7 +92,7 @@ def adfs_find_services(adfs_endpoint):
     try: 
 
         # Issuing request
-        response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -107,8 +109,9 @@ def adfs_find_services(adfs_endpoint):
                 # First parsing out if the information we are looking for is even availible
                 check_services = soup.find("div", {"id": "idp_SignInThisSiteStatusLabel"}).get_text()
 
-            except requests.ConnectionError:
-                pass
+            except AttributeError:
+                services.append("Not able to enumerate services.")
+                return services
 
             else:
 
@@ -139,7 +142,7 @@ def find_adfs_pwreset(adfs_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -172,7 +175,7 @@ def adfs_ntlm_pathfind(adfs_endpoint):
 
             # Crafint our URL and issuing request
             url = f'{adfs_endpoint}{e}'
-            response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
 
         except requests.ConnectionError:
             pass
@@ -180,7 +183,7 @@ def adfs_ntlm_pathfind(adfs_endpoint):
         else:
 
             # If we got a 401, NTLM auth is there
-            if response.status_code == 401:
+            if response.status_code == 401 and 'NTLM' in response.headers['WWW-Authenticate']:
                 valid_endpoints.append(url)
      
     return valid_endpoints
@@ -190,22 +193,23 @@ def adfs_ntlm_pathfind(adfs_endpoint):
 def adfs_ntlm_parse(adfs_ntlm_paths):
 
     # Defining empty array to store information 
-    ntlm_data = []
+    # ntlm_data = []
     
     try:
         ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
-        response = requests.post(adfs_ntlm_paths[0], headers=ntlm_header, verify=False)
+        response = requests.post(adfs_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
     except requests.ConnectionError:
         pass
 
     try:
 
         # Parsing what we need
-        if response.status_code == 401:
+        if response.status_code == 401 and 'NTLM' in response.headers['WWW-Authenticate']:
             ntlm_info = ntlmdecode(response.headers["WWW-Authenticate"])
-            ntlm_data.append(ntlm_info["NetBIOS_Domain_Name"])
-            ntlm_data.append(ntlm_info["FQDN"])
-            ntlm_data.append(ntlm_info["DNS_Domain_name"])
+            ntlm_data = ntlm_info["NetBIOS_Domain_Name"]
+            # ntlm_data.append(ntlm_info["NetBIOS_Domain_Name"])
+            # ntlm_data.append(ntlm_info["FQDN"])
+            # ntlm_data.append(ntlm_info["DNS_Domain_name"])
             return ntlm_data
 
     # Bad error handling 
@@ -224,20 +228,21 @@ def adfs_display(adfs_endpoint, adfs_version, adfs_services, adfs_pwreset, adfs_
 
     table_adfs.add_row('SSPWR', f'{adfs_pwreset}')
 
-
     if len(adfs_ntlm_paths) != 0:
         paths = "\n".join(item for item in adfs_ntlm_paths)
         table_adfs.add_row('URLS', f'{paths}')
 
-    if len(adfs_ntlm_data) != 0:
-        table_adfs.add_row('DOMAIN', f'{adfs_ntlm_data[0]}')
+    if adfs_ntlm_data is not None: 
+        table_adfs.add_row('DOMAIN', f'{adfs_ntlm_data}')
+    #if len(adfs_ntlm_data) != 0: 
+    #    table_adfs.add_row('DOMAIN', f'{adfs_ntlm_data[0]}')
 
     if len(adfs_services) > 10:
-        print('Services > 10')
-        print('y to display all.')
-        print('n to display 10.')
-        reply = str(input(' (y/n): ')).lower().strip()
-        if reply[:1] == 'y':
+        print('Service list > 10')
+        print('Y to display all.')
+        print('N to display 10.')
+        reply = str(input('(Y/n): ')).lower().strip()
+        if reply[:1] == 'y' or reply[:1] == '':
             services = "\n".join(item for item in adfs_services)
             table_adfs.add_row('SERVICES', f'{services}')
         elif reply[:1] == 'n':

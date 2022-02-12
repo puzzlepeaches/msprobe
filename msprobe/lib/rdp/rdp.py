@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
-
+import pkg_resources
 
 # Dealing with SSL Warnings
 try:
@@ -17,13 +17,14 @@ except Exception:
 def rdpw_find(target):
 
     # Reading in potential subdomains
-    sd = [line.strip() for line in open("lib/rdp/subs.txt")]
+    resource = pkg_resources.resource_filename(__name__, 'subs.txt')
+    sd = [line.strip() for line in open(resource)]
 
     # Crafting URL's and issuing requests
     for i in sd:
         url = f'https://{i}.{target}/RDWeb/Pages/en-US/login.aspx'
         try:
-            response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         else:
@@ -64,7 +65,7 @@ def rdpw_find_version(url):
     image = f'{url}/RDWeb/Pages/images/WS_h_c.png'
 
     try:
-        response = requests.get(image, allow_redirects=True, verify=False, timeout=10)
+        response = requests.get(image, allow_redirects=True, verify=False, timeout=15)
         
         # Making sure we got a legit png
         if response.status_code == 200:
@@ -108,7 +109,7 @@ def rdpw_get_info(url):
 
         # Issuing request and parsing out all form values containing input
         try:
-            response = requests.get(info_url, allow_redirects=False, verify=False, timeout=10)
+            response = requests.get(info_url, allow_redirects=False, verify=False, timeout=15)
             soup = BeautifulSoup(response.content, "lxml")
             form = soup.find('form', attrs={"id": "FrmLogin"})
             inputs = form.findAll('input')

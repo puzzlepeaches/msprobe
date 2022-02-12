@@ -103,15 +103,14 @@ def adfs (target):
 
             # Getting NTLM endpoint information
             adfs_ntlm_paths = adfs_ntlm_pathfind(adfs_endpoint)
-            if len(adfs_ntlm_paths) != 0: 
+            if len(adfs_ntlm_paths) != 0:
                 adfs_ntlm_data = adfs_ntlm_parse(adfs_ntlm_paths)
             else:
-                adfs_ntlm_data = []
+                adfs_ntlm_data = 'UNKNOWN'
             
             status.stop()
 
             # Displaying what we found
-
             adfs_display(adfs_endpoint, adfs_version, adfs_services, adfs_pwreset, adfs_ntlm_paths, adfs_ntlm_data)
 
         else:

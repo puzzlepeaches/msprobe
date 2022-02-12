@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
+import pkg_resources 
 
 
 # Dealing with SSL Warnings
@@ -18,13 +19,14 @@ except Exception:
 def exch_find(target):
 
     # Reading in potential subdomains
-    sd = [line.strip() for line in open("lib/exch/subs.txt")]
+    resource = pkg_resources.resource_filename(__name__, 'subs.txt')
+    sd = [line.strip() for line in open(resource)]
 
     # Crafting URL's and issuing requests
     for i in sd:
         url = f'https://{i}.{target}'
         try:
-            response = requests.get(url, timeout=3, allow_redirects=False, verify=False)
+            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         else:
@@ -45,7 +47,7 @@ def exch_find(target):
 # Checking if OWA pannel is availible 
 def find_owa(exch_endpoint):
     try:
-        r = requests.get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
+        r = requests.get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else:
@@ -55,7 +57,7 @@ def find_owa(exch_endpoint):
 # Checking if ECP pannel is availible 
 def find_ecp(exch_endpoint):
     try:
-        r = requests.get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
+        r = requests.get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else: 
@@ -70,7 +72,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If OWA is availible we will try to grab it from there
     if owa == True:
         try:
-            owa_response = requests.get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
+            owa_response = requests.get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
@@ -83,7 +85,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
-            ecp_response = requests.get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
+            ecp_response = requests.get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
