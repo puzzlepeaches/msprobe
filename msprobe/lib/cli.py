@@ -4,6 +4,7 @@ import logging
 from .exch.exch import *
 from .rdp.rdp import *
 from .adfs.adfs import *
+from .skype.skype import *
 
 console = Console()
 
@@ -119,7 +120,43 @@ def adfs (target):
             console.log(f'ADFS not found: {target}', style='bold red')
             status.stop()
 
+def skype(target):
+    
+    # Setting up our console logging                                                            
+    with console.status("[bold green]Skype for Business Module Executing...") as status:                        
 
+        # First trying to find if an SFB server exists
+        sfb_endpoint = sfb_find(target)
+        
+
+        # Did we find anything
+        if sfb_endpoint is not None:
+
+            # Getting the instance version 
+            sfb_version = sfb_find_version(sfb_endpoint)
+
+            # Getting information about the instance
+            sfb_scheduler = sfb_find_scheduler(sfb_endpoint) 
+            sfb_chat = sfb_find_chat(sfb_endpoint)
+
+            # Getting NTLM endpoint information
+            sfb_ntlm_paths = sfb_ntlm_pathfind(sfb_endpoint)
+            if len(sfb_ntlm_paths) != 0:
+                sfb_ntlm_data = sfb_ntlm_parse(sfb_ntlm_paths)
+            else:
+                sfb_ntlm_data = 'UNKNOWN'
+
+            
+            status.stop()
+
+            # Displaying what we found
+            sfb_display(sfb_endpoint, sfb_version, sfb_scheduler, sfb_chat, sfb_ntlm_paths, sfb_ntlm_data)
+
+        else:
+
+            # Logging a failure if no RD Web instance found
+            console.log(f'Skype for Business not found: {target}', style='bold red')
+            status.stop()
 
 def main():
     fire.Fire()
