@@ -32,10 +32,11 @@ def sfb_find(target):
              if response.status_code == 200:
                  if response.headers['Content-Type'] == 'application/json':
                      if 'online.lync.com' not in response.json(): 
-                         url = response.json()['_links']['self']['href']
-                         url = f'https://{urlparse(url).hostname}'
-                         if 'online.lync.com' not in url:
-                             return url
+                        url = response.json()['_links']['self']['href']
+                        url = f'https://{urlparse(url).hostname}'
+                        if 'online.lync.com' not in url:
+                            if 'skypeforbusiness.us' not in url:
+                                return url
 
 def sfb_find_version(sfb_endpoint):
     
