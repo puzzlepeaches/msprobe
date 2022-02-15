@@ -66,7 +66,11 @@ def sfb_find_version(sfb_endpoint):
                 if 'Web Scheduler Version' in c:
                     data = re.findall("[-+]?\d*\.*\d+", c)
                     build = ''.join(data)
-            version_info.append(build)
+                    version_info.append(build)
+                else:
+                    build = 'UKNOWN'
+                    version_info.append(build)
+            
 
         else:
             version_info.append('UNKOWN')
@@ -104,11 +108,11 @@ def sfb_ntlm_pathfind(sfb_endpoint):
         else:
 
             # If we got a 401, NTLM auth is there
-            if response.status_code == 401: 
-                if 'NTLM' in response.headers['WWW-Authenticate']:
+            try:
+                if response.status_code == 401 and 'NTLM' in response.headers['WWW-Authenticate']:
                     valid_endpoints.append(url)
-                elif 'NTLM' in response.headers['Www-Authenticate']:
-                    valid_endpoints.append(url)
+            except Exception:
+                pass
 
     return valid_endpoints
 
