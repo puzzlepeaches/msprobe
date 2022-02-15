@@ -29,7 +29,10 @@ def exch(target):
 
             # Getting NTLM endpoint information
             exch_ntlm_paths = exch_ntlm_pathfind(exch_endpoint)
-            exch_ntlm_info = exch_ntlm_parse(exch_ntlm_paths)
+            if len(exch_ntlm_paths) != 0:
+                exch_ntlm_info = exch_ntlm_parse(exch_ntlm_paths)
+            else:
+                exch_ntlm_data = 'UNKNOWN'
 
             status.stop()
 
