@@ -127,7 +127,6 @@ def skype(target):
 
         # First trying to find if an SFB server exists
         sfb_endpoint = sfb_find(target)
-        
 
         # Did we find anything
         if sfb_endpoint is not None:
@@ -157,6 +156,13 @@ def skype(target):
             # Logging a failure if no RD Web instance found
             console.log(f'Skype for Business not found: {target}', style='bold red')
             status.stop()
+
+def all(target):
+    exch(target)
+    rdp(target)
+    adfs(target)
+    skype(target)
+
 
 def main():
     fire.Fire()

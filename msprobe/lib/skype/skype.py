@@ -6,6 +6,7 @@ from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
 import pkg_resources
+import json
 
 
 # Dealing with SSL Warnings
@@ -22,18 +23,18 @@ def sfb_find(target):
     sd = [line.strip() for line in open(resource)]
 
     for i in sd:
-        url = f'https://{i}.{target}/WebTicket/WebTicketService.svc/Auth'
+        url = f'https://{i}.{target}/dialin/'
         try:
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests.get(url, timeout=5, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         else:
-
-            # Server responds differently if on-prem or in lync
-            # Empty GET request to the endpoint gives 400 but if in cloud throws a 403
-            if response.status_code == 400 and response.headers['Content-Length'] == '0':
-                url = f'https://{urlparse(url).hostname}'
-                return url
+            if response.status_code == 200:
+                if 'online.lync.com' not in response.json(): 
+                    if 'AutodiscoverService.svc' in response.json():
+                        url = response.json()['_links']['self']['href']
+                        url = f'https://{urlparse(url).hostname}'
+                        return url
 
 def sfb_find_version(sfb_endpoint):
     
@@ -43,8 +44,8 @@ def sfb_find_version(sfb_endpoint):
     version_info = []
 
     try:
-        sched_response = requests.get(sched_url, timeout=15, allow_redirects=True, verify=False)
-        dialin_response = requests.get(dialin_url, timeout=15, allow_redirects=False, verify=False)
+        sched_response = requests.get(sched_url, timeout=5, allow_redirects=True, verify=False)
+        dialin_response = requests.get(dialin_url, timeout=5, allow_redirects=False, verify=False)
     except requests.ConnectionError:
         pass
     else:
@@ -94,7 +95,7 @@ def sfb_ntlm_pathfind(sfb_endpoint):
 
             # Crafint our URL and issuing request
             url = f'{sfb_endpoint}{e}'
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests.get(url, timeout=5, allow_redirects=False, verify=False)
 
         except requests.ConnectionError:
             pass
@@ -141,7 +142,7 @@ def sfb_find_scheduler(sfb_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=True, verify=False)
+        response = requests.get(url, timeout=5, allow_redirects=True, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -161,7 +162,7 @@ def sfb_find_chat(sfb_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests.get(url, timeout=5, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
