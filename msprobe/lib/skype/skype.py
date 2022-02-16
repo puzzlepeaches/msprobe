@@ -28,6 +28,8 @@ def sfb_find(target):
             response = requests.get(url, timeout=15, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             pass
+        except requests.ReadTimeout:
+            pass
         else:
              if response.status_code == 200:
                  if response.headers['Content-Type'] == 'application/json':
@@ -69,7 +71,7 @@ def sfb_find_version(sfb_endpoint):
                     build = ''.join(data)
                     version_info.append(build)
                 else:
-                    build = 'UKNOWN'
+                    build = 'UNKNOWN'
                     version_info.append(build)
             
 

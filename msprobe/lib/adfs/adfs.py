@@ -70,7 +70,7 @@ def adfs_find_version(adfs_endpoint):
                 # Extracting raw value from copyright field
                 version_raw = soup.find("span",{"id":"copyright"}).get_text()
             
-            # If something happens, just return UKNOWN
+            # If something happens, just return UNKNOWN
             except Exception:
                 version = 'UNKOWN'
                 return version
