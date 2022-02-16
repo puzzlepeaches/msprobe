@@ -1,27 +1,50 @@
-import fire
-from rich.console import Console
+import click 
 import logging
 from .exch.exch import *
 from .rdp.rdp import *
 from .adfs.adfs import *
 from .skype.skype import *
+from rich.console import Console
+from rich.logging import RichHandler
 
+FORMAT = "%(message)s"
+logging.basicConfig(
+    level="NOTSET",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=True)]
+)
+log = logging.getLogger("rich")
+
+# Initializing console for rich
 console = Console()
 
-def exch(target):
-    
+@click.group()
+def cli():
+    pass
+
+
+@click.command()
+@click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.argument('target')
+def exch(target, verbose):
+
     # Setting up our console logging
     with console.status("[bold green]Exchange Module Executing...") as status:
+
+        if verbose:
+            log.debug("Verbose logging enabled for module: exch")
+            status.stop()
 
         # First trying to find if an Exchange server exists
         exch_endpoint = exch_find(target)
         
-
         # Did we find anything
         if exch_endpoint is not None:
 
             # Checking if OWA and ECP exist
             owa_exists = find_owa(exch_endpoint) 
+
             ecp_exists = find_ecp(exch_endpoint)
 
             # Getting current Exchange version
@@ -29,10 +52,12 @@ def exch(target):
 
             # Getting NTLM endpoint information
             exch_ntlm_paths = exch_ntlm_pathfind(exch_endpoint)
-            if len(exch_ntlm_paths) != 0:
-                exch_ntlm_info = exch_ntlm_parse(exch_ntlm_paths)
-            else:
+
+            # If no NTLM endpoints found, set data to UNKNOWN, otherwise enumerate
+            if len(exch_ntlm_paths) == 0:
                 exch_ntlm_data = 'UNKNOWN'
+            elif len(exch_ntlm_paths) != 0:
+                exch_ntlm_info = exch_ntlm_parse(exch_ntlm_paths)
 
             status.stop()
 
@@ -47,10 +72,17 @@ def exch(target):
 
 
 
-def rdp(target):
+@click.command()
+@click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.argument('target')
+def rdp(target, verbose):
     
     # Setting up our console logging
     with console.status("[bold green]RD Web Module Executing...") as status:
+
+        if verbose:
+            log.info("Verbose logging enabled for module: rdp.")
+            status.stop()
 
         # First trying to find if an RD Web server exists
         rdpw_endpoint = rdpw_find(target)
@@ -83,10 +115,17 @@ def rdp(target):
             status.stop()
 
 
-def adfs (target):
+@click.command()
+@click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.argument('target')
+def adfs(target, verbose):
     
     # Setting up our console logging
     with console.status("[bold green]ADFS Module Executing...") as status:
+
+        if verbose:
+            log.info("Verbose logging enabled for module: adfs.")
+            status.stop()
 
         # First trying to find if an ADFS server exists
         adfs_endpoint = adfs_find(target)
@@ -123,10 +162,17 @@ def adfs (target):
             console.log(f'ADFS not found: {target}', style='bold red')
             status.stop()
 
-def skype(target):
+@click.command()
+@click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.argument('target')
+def skype(target, verbose):
     
-    # Setting up our console logging                                                            
-    with console.status("[bold green]Skype for Business Module Executing...") as status:                        
+    # Setting up our console logging                                                           
+    with console.status("[bold green]Skype for Business Module Executing...") as status:       
+
+        if verbose:
+            log.info("Verbose logging enabled for module: skype.")
+            status.stop()
 
         # First trying to find if an SFB server exists
         sfb_endpoint = sfb_find(target)
@@ -156,16 +202,26 @@ def skype(target):
 
         else:
 
-            # Logging a failure if no RD Web instance found
+            # Logging a failure if no SFB instance found
             console.log(f'Skype for Business not found: {target}', style='bold red')
             status.stop()
 
-def all(target):
-    exch(target)
-    rdp(target)
-    adfs(target)
-    skype(target)
+@click.command()
+@click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.argument('target')
+@click.pass_context
+def full(ctx, target, verbose):
+    ctx.forward(exch)
+    ctx.forward(rdp)
+    ctx.forward(adfs)
+    ctx.forward(skype)
 
+# Defining commands
+cli.add_command(exch)
+cli.add_command(adfs)
+cli.add_command(skype)
+cli.add_command(rdp)
+cli.add_command(full)
 
-def main():
-    fire.Fire()
+if __name__ == '__main__':
+    cli()

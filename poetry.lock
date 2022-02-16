@@ -44,6 +44,17 @@ python-versions = ">=3.5.0"
 unicode_backport = ["unicodedata2"]
 
 [[package]]
+name = "click"
+version = "8.0.3"
+description = "Composable command line interface toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[[package]]
 name = "colorama"
 version = "0.4.4"
 description = "Cross-platform colored terminal text."
@@ -61,26 +72,6 @@ python-versions = "*"
 
 [package.extras]
 test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
-
-[[package]]
-name = "fire"
-version = "0.4.0"
-description = "A library for automatically generating command line interfaces."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-six = "*"
-termcolor = "*"
-
-[[package]]
-name = "hashlib"
-version = "20081119"
-description = "Secure hash and message digest algorithm library"
-category = "main"
-optional = false
-python-versions = "*"
 
 [[package]]
 name = "idna"
@@ -141,28 +132,12 @@ pygments = ">=2.6.0,<3.0.0"
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
-name = "six"
-version = "1.16.0"
-description = "Python 2 and 3 compatibility utilities"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
-
-[[package]]
 name = "soupsieve"
 version = "2.3.1"
 description = "A modern CSS selector implementation for Beautiful Soup."
 category = "main"
 optional = false
 python-versions = ">=3.6"
-
-[[package]]
-name = "termcolor"
-version = "1.1.0"
-description = "ANSII Color formatting for output in terminal."
-category = "main"
-optional = false
-python-versions = "*"
 
 [[package]]
 name = "urllib3"
@@ -180,7 +155,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "4ce4795bb5b61741c8819c46ff217b88683daccadf88b823ac5a6cdb0b5f25a4"
+content-hash = "afb96c54a3a6e62a285edcc79f19506b95080472a1575789211b0392fe5cc622"
 
 [metadata.files]
 beautifulsoup4 = [
@@ -198,6 +173,10 @@ charset-normalizer = [
     {file = "charset-normalizer-2.0.11.tar.gz", hash = "sha256:98398a9d69ee80548c762ba991a4728bfc3836768ed226b3945908d1a688371c"},
     {file = "charset_normalizer-2.0.11-py3-none-any.whl", hash = "sha256:2842d8f5e82a1f6aa437380934d5e1cd4fcf2003b06fed6940769c164a480a45"},
 ]
+click = [
+    {file = "click-8.0.3-py3-none-any.whl", hash = "sha256:353f466495adaeb40b6b5f592f9f91cb22372351c84caeb068132442a4518ef3"},
+    {file = "click-8.0.3.tar.gz", hash = "sha256:410e932b050f5eed773c4cda94de75971c89cdb3155a72a0831139a79e5ecb5b"},
+]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
@@ -205,13 +184,6 @@ colorama = [
 commonmark = [
     {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
     {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
-]
-fire = [
-    {file = "fire-0.4.0.tar.gz", hash = "sha256:c5e2b8763699d1142393a46d0e3e790c5eb2f0706082df8f647878842c216a62"},
-]
-hashlib = [
-    {file = "hashlib-20060408a.win32-py2.4-openssl.exe", hash = "sha256:6ece4dbc12a71cd24793e5a06ba72f0ee0142affea6593842e5520f400ec9dbb"},
-    {file = "hashlib-20081119.zip", hash = "sha256:419de2fd10ae71ed9c6adcb55903f116abd1d8acc8c814dfd5f839b4d5013e38"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
@@ -232,16 +204,9 @@ rich = [
     {file = "rich-11.1.0-py3-none-any.whl", hash = "sha256:365ebcdbfb3aa8d4b0ed2490e0fbf7b886a39d14eb7ea5fb7aece950835e1eed"},
     {file = "rich-11.1.0.tar.gz", hash = "sha256:43e03d8eec12e21beaecc22c828a41c4247356414a12d5879834863d4ad53816"},
 ]
-six = [
-    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
-    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
-]
 soupsieve = [
     {file = "soupsieve-2.3.1-py3-none-any.whl", hash = "sha256:1a3cca2617c6b38c0343ed661b1fa5de5637f257d4fe22bd9f1338010a1efefb"},
     {file = "soupsieve-2.3.1.tar.gz", hash = "sha256:b8d49b1cd4f037c7082a9683dfa1801aa2597fb11c3a1155b7a5b94829b4f1f9"},
-]
-termcolor = [
-    {file = "termcolor-1.1.0.tar.gz", hash = "sha256:1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.8-py2.py3-none-any.whl", hash = "sha256:000ca7f471a233c2251c6c7023ee85305721bfdf18621ebff4fd17a8653427ed"},
