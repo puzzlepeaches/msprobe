@@ -7,15 +7,6 @@ from .skype.skype import *
 from rich.console import Console
 from rich.logging import RichHandler
 
-FORMAT = "%(message)s"
-logging.basicConfig(
-    level="NOTSET",
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler(rich_tracebacks=True)]
-)
-log = logging.getLogger("rich")
-
 # Initializing console for rich
 console = Console()
 
@@ -33,8 +24,10 @@ def exch(target, verbose):
     with console.status("[bold green]Exchange Module Executing...") as status:
 
         if verbose:
-            log.debug("Verbose logging enabled for module: exch")
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
             status.stop()
+            log.debug("Verbose logging enabled for module: exch")
 
         # First trying to find if an Exchange server exists
         exch_endpoint = exch_find(target)
@@ -81,8 +74,10 @@ def rdp(target, verbose):
     with console.status("[bold green]RD Web Module Executing...") as status:
 
         if verbose:
-            log.info("Verbose logging enabled for module: rdp.")
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
             status.stop()
+            log.debug("Verbose logging enabled for module: rdp")
 
         # First trying to find if an RD Web server exists
         rdpw_endpoint = rdpw_find(target)
@@ -124,8 +119,10 @@ def adfs(target, verbose):
     with console.status("[bold green]ADFS Module Executing...") as status:
 
         if verbose:
-            log.info("Verbose logging enabled for module: adfs.")
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
             status.stop()
+            log.debug("Verbose logging enabled for module: adfs")
 
         # First trying to find if an ADFS server exists
         adfs_endpoint = adfs_find(target)
@@ -171,8 +168,10 @@ def skype(target, verbose):
     with console.status("[bold green]Skype for Business Module Executing...") as status:       
 
         if verbose:
-            log.info("Verbose logging enabled for module: skype.")
+            logging.basicConfig(level='DEBUG', format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
             status.stop()
+            log.debug("Verbose logging enabled for module: skype")
 
         # First trying to find if an SFB server exists
         sfb_endpoint = sfb_find(target)

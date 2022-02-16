@@ -25,7 +25,7 @@ def sfb_find(target):
     for i in sd:
         url = f'https://{i}.{target}/dialin/'
         try:
-            response = requests.get(url, timeout=15, allow_redirects=True, verify=False)
+            response = requests.get(url, timeout=5, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             pass
         except requests.ReadTimeout:
