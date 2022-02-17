@@ -51,6 +51,8 @@ def sfb_find(target):
             pass
         except requests.ReadTimeout:
             pass
+        except Exception:
+            pass
         else:
              if response.status_code == 200:
                  if response.headers['Content-Type'] == 'application/json':

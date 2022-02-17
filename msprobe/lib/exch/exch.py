@@ -69,7 +69,7 @@ def exch_find(target):
 # Checking if OWA pannel is availible 
 def find_owa(exch_endpoint):
     try:
-        r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
+        r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else:
@@ -79,7 +79,7 @@ def find_owa(exch_endpoint):
 # Checking if ECP pannel is availible 
 def find_ecp(exch_endpoint):
     try:
-        r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
+        r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else: 
@@ -94,7 +94,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If OWA is availible we will try to grab it from there
     if owa == True:
         try:
-            owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
+            owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
@@ -107,7 +107,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
-            ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
+            ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
@@ -136,7 +136,7 @@ def exch_ntlm_pathfind(exch_endpoint):
         url = f'{exch_endpoint}/{i}'
         
         try:
-            response = requests_retry_session().get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         except response.status_code != 401:
@@ -150,7 +150,7 @@ def exch_ntlm_pathfind(exch_endpoint):
 def exch_ntlm_parse(ntlm_endpoints):
 
     # Defining array to store NTLM information
-    ntlm_data = []
+    #ntlm_data = []
 
     ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
     response = requests.post(ntlm_endpoints[0], headers=ntlm_header, verify=False)
@@ -158,9 +158,9 @@ def exch_ntlm_parse(ntlm_endpoints):
     try:
         if response.status_code == 401:
             ntlm_info = ntlmdecode(response.headers["WWW-Authenticate"])
-            ntlm_data.append(ntlm_info["NetBIOS_Domain_Name"])
-            ntlm_data.append(ntlm_info["FQDN"])
-            ntlm_data.append(ntlm_info["DNS_Domain_name"])
+            ntlm_data = ntlm_info["NetBIOS_Domain_Name"]
+            #ntlm_data.append(ntlm_info["FQDN"])
+            #ntlm_data.append(ntlm_info["DNS_Domain_name"])
             return ntlm_data
     except Exception as a:
         print('Something went wrong!')
@@ -191,7 +191,7 @@ def exch_display(exch_endpoint, owa_exists, ecp_exists, exch_version, exch_ntlm_
     elif owa_exists == False:
        table_exch.add_row('EAC', 'FALSE')
 
-    table_exch.add_row('DOMAIN', f'{exch_ntlm_info[0]}')
+    table_exch.add_row('DOMAIN', f'{exch_ntlm_info}')
 
     paths = "\n".join(item for item in exch_ntlm_paths)
     table_exch.add_row('URLS ', f'{paths}')

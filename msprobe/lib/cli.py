@@ -48,7 +48,7 @@ def exch(target, verbose):
 
             # If no NTLM endpoints found, set data to UNKNOWN, otherwise enumerate
             if len(exch_ntlm_paths) == 0:
-                exch_ntlm_data = 'UNKNOWN'
+                exch_ntlm_info = 'UNKNOWN'
             elif len(exch_ntlm_paths) != 0:
                 exch_ntlm_info = exch_ntlm_parse(exch_ntlm_paths)
 
