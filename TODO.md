@@ -5,3 +5,4 @@
 - Improve individual displays and display of all tables during full discovery
 - add fireworks when everything is found for domain
 - error handling added specifically for exch redirect to O365 situation
+- add output file and logging functionality
