@@ -6,3 +6,4 @@
 - add fireworks when everything is found for domain
 - error handling added specifically for exch redirect to O365 situation
 - add output file and logging functionality
+- allow -v or -vv for info or debug (info will just be messages we add manually to modules)
