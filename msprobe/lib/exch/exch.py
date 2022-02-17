@@ -99,11 +99,15 @@ def find_version(exch_endpoint, owa, ecp):
             print('Something went wrong determining version!')
             exit()
         else:
-            soup = BeautifulSoup(owa_response.text, 'html.parser')
-            version_path = soup.find("link",{"rel":"shortcut icon"})['href']
-            find_version = re.findall("[-+]?\d*\.*\d+",version_path)
-            exchange_version = ''.join(find_version)
-            return exchange_version
+            try:
+                soup = BeautifulSoup(owa_response.text, 'html.parser')
+                version_path = soup.find("link",{"rel":"shortcut icon"})['href']
+                find_version = re.findall("[-+]?\d*\.*\d+",version_path)
+                exchange_version = ''.join(find_version)
+                return exchange_version
+            except TypeError:
+                exchange_version = 'UNKNOWN'
+                return exchange_version
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
@@ -112,11 +116,15 @@ def find_version(exch_endpoint, owa, ecp):
             print('Something went wrong determining version!')
             exit()
         else:
-            soup = BeautifulSoup(ecp_response.text, 'html.parser')
-            version_path = soup.find("link",{"rel":"shortcut icon"})['href']
-            find_version = re.findall("[-+]?\d*\.*\d+",version_path)
-            exchange_version = ''.join(find_version)
-            return exchange_version
+            try:
+                soup = BeautifulSoup(ecp_response.text, 'html.parser')
+                version_path = soup.find("link",{"rel":"shortcut icon"})['href']
+                find_version = re.findall("[-+]?\d*\.*\d+",version_path)
+                exchange_version = ''.join(find_version)
+                return exchange_version
+            except TypeError:
+                exchange_version = 'UNKNOWN'
+                return exchange_version
 
     # Not sure what happened, returning UNKNOWN
     else:
@@ -126,7 +134,8 @@ def find_version(exch_endpoint, owa, ecp):
 def exch_ntlm_pathfind(exch_endpoint):
 
     # Reading in list of potential Exchange NTLM authentication endpoints
-    np = [line.strip() for line in open("lib/exch/paths.txt")]
+    resource = pkg_resources.resource_filename(__name__, 'paths.txt')
+    np = [line.strip() for line in open(resource)]
 
     # Creating an array to put found paths into
     ntlm_endpoints = []
