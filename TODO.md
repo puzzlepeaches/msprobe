@@ -4,3 +4,4 @@
 - Think I can still parse info from NTLM but but actually spray: see here https://github.com/ReverendThing/Carnivore/blob/master/sLYNCy-WPF/DomainEnumeration/NTLMDiscovery.cs - yes I definately can - need to mod existing library for this 
 - Improve individual displays and display of all tables during full discovery
 - add fireworks when everything is found for domain
+- error handling added specifically for exch redirect to O365 situation
