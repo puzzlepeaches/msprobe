@@ -1,4 +1,6 @@
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 import hashlib
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
@@ -14,6 +16,25 @@ try:
 except Exception:
     pass
 
+def requests_retry_session(
+    retries=1,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
 def rdpw_find(target):
 
     # Reading in potential subdomains
@@ -24,7 +45,7 @@ def rdpw_find(target):
     for i in sd:
         url = f'https://{i}.{target}/RDWeb/Pages/en-US/login.aspx'
         try:
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         else:
@@ -65,7 +86,7 @@ def rdpw_find_version(url):
     image = f'{url}/RDWeb/Pages/images/WS_h_c.png'
 
     try:
-        response = requests.get(image, allow_redirects=True, verify=False, timeout=15)
+        response = requests_retry_session().get(image, allow_redirects=True, verify=False, timeout=5)
         
         # Making sure we got a legit png
         if response.status_code == 200:
@@ -109,7 +130,7 @@ def rdpw_get_info(url):
 
         # Issuing request and parsing out all form values containing input
         try:
-            response = requests.get(info_url, allow_redirects=False, verify=False, timeout=15)
+            response = requests_retry_session().get(info_url, allow_redirects=False, verify=False, timeout=5)
             soup = BeautifulSoup(response.content, "lxml")
             form = soup.find('form', attrs={"id": "FrmLogin"})
             inputs = form.findAll('input')
@@ -151,7 +172,7 @@ def rdpw_ntlm_pathfind(url):
     url = f'{url}/rpc'
 
     try:
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
     except requests.ConnectionError:
         pass
     else:
@@ -164,7 +185,7 @@ def rdpw_ntlm_parse(url):
     ntlm_data = []
 
     ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
-    response = requests.post(f'{url}/rpc', headers=ntlm_header, verify=False)
+    response = requests_retry_session().post(f'{url}/rpc', headers=ntlm_header, verify=False)
 
     try:
         if response.status_code == 401:

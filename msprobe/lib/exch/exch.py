@@ -1,5 +1,7 @@
 import re
 import requests 
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
@@ -15,6 +17,25 @@ try:
 except Exception:
     pass
 
+def requests_retry_session(
+    retries=1,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
 # Finding instances of target application 
 def exch_find(target):
 
@@ -26,7 +47,8 @@ def exch_find(target):
     for i in sd:
         url = f'https://{i}.{target}'
         try:
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+
         except requests.ConnectionError:
             pass
         else:
@@ -47,7 +69,7 @@ def exch_find(target):
 # Checking if OWA pannel is availible 
 def find_owa(exch_endpoint):
     try:
-        r = requests.get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
+        r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else:
@@ -57,7 +79,7 @@ def find_owa(exch_endpoint):
 # Checking if ECP pannel is availible 
 def find_ecp(exch_endpoint):
     try:
-        r = requests.get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
+        r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
     except requests.ConnectionError:
         return False
     else: 
@@ -72,7 +94,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If OWA is availible we will try to grab it from there
     if owa == True:
         try:
-            owa_response = requests.get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
+            owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=15, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
@@ -85,7 +107,7 @@ def find_version(exch_endpoint, owa, ecp):
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
-            ecp_response = requests.get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
+            ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=15, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             print('Something went wrong determining version!')
             exit()
@@ -114,7 +136,7 @@ def exch_ntlm_pathfind(exch_endpoint):
         url = f'{exch_endpoint}/{i}'
         
         try:
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=15, allow_redirects=False, verify=False)
         except requests.ConnectionError:
             pass
         except response.status_code != 401:

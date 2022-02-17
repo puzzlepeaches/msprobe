@@ -1,5 +1,7 @@
 import re
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
@@ -14,6 +16,25 @@ try:
     requests.packages.urllib3.disable_warnings()
 except Exception:
     pass
+
+def requests_retry_session(
+    retries=1,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
 
 # Using to find ADFS endpoints
@@ -30,7 +51,7 @@ def adfs_find(target):
 
         try:
             # Issuing request to URL
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False) 
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False) 
 
         except requests.ConnectionError:
             pass
@@ -53,7 +74,7 @@ def adfs_find_version(adfs_endpoint):
 
     try:
         # Issuing request to URL
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -92,7 +113,7 @@ def adfs_find_services(adfs_endpoint):
     try: 
 
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -142,7 +163,7 @@ def find_adfs_pwreset(adfs_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -175,7 +196,7 @@ def adfs_ntlm_pathfind(adfs_endpoint):
 
             # Crafint our URL and issuing request
             url = f'{adfs_endpoint}{e}'
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
         except requests.ConnectionError:
             pass
@@ -194,7 +215,7 @@ def adfs_ntlm_parse(adfs_ntlm_paths):
     
     try:
         ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
-        response = requests.post(adfs_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
+        response = requests_retry_session().post(adfs_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
     except requests.ConnectionError:
         pass
 

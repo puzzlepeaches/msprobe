@@ -1,5 +1,7 @@
 import re
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup, Comment
 from .ntlm import ntlmdecode
@@ -16,6 +18,25 @@ try:
 except Exception:
     pass
 
+def requests_retry_session(
+    retries=1,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
+
 
 # Finding skype for business endpoint
 def sfb_find(target):
@@ -25,7 +46,7 @@ def sfb_find(target):
     for i in sd:
         url = f'https://{i}.{target}/dialin/'
         try:
-            response = requests.get(url, timeout=5, allow_redirects=True, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=True, verify=False)
         except requests.ConnectionError:
             pass
         except requests.ReadTimeout:
@@ -48,8 +69,8 @@ def sfb_find_version(sfb_endpoint):
     version_info = []
 
     try:
-        sched_response = requests.get(sched_url, timeout=15, allow_redirects=True, verify=False)
-        dialin_response = requests.get(dialin_url, timeout=15, allow_redirects=False, verify=False)
+        sched_response = requests_retry_session().get(sched_url, timeout=5, allow_redirects=True, verify=False)
+        dialin_response = requests_retry_session().get(dialin_url, timeout=5, allow_redirects=False, verify=False)
     except requests.ConnectionError:
         pass
     else:
@@ -103,7 +124,7 @@ def sfb_ntlm_pathfind(sfb_endpoint):
 
             # Crafint our URL and issuing request
             url = f'{sfb_endpoint}{e}'
-            response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
         except requests.ConnectionError:
             pass
@@ -123,7 +144,7 @@ def sfb_ntlm_parse(sfb_ntlm_paths):
 
     try:
         ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
-        response = requests.post(sfb_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
+        response = requests_retry_session().post(sfb_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
 
     except requests.ConnectionError:
         pass
@@ -150,7 +171,7 @@ def sfb_find_scheduler(sfb_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=True, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=True, verify=False)
 
     except requests.ConnectionError:
         pass
@@ -170,7 +191,7 @@ def sfb_find_chat(sfb_endpoint):
 
     try:
         # Issuing request
-        response = requests.get(url, timeout=15, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
     except requests.ConnectionError:
         pass
