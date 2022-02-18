@@ -17,17 +17,24 @@ def cli():
 
 @click.command()
 @click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.option('-vv','--debug', default=False, required=False, show_default=True, is_flag=True)
 @click.argument('target')
-def exch(target, verbose):
+def exch(target, verbose, debug):
 
     # Setting up our console logging
     with console.status("[bold green]Exchange Module Executing...") as status:
 
         if verbose:
+            logging.basicConfig(level='INFO', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
+            # status.stop()
+            log.info("Verbose logging enabled for module: exch")
+
+        if debug:
             logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
-            log.debug("Verbose logging enabled for module: exch")
+            log.debug("Debug logging enabled for module: exch")
 
         # First trying to find if an Exchange server exists
         exch_endpoint = exch_find(target)
@@ -67,17 +74,24 @@ def exch(target, verbose):
 
 @click.command()
 @click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.option('-vv','--debug', default=False, required=False, show_default=True, is_flag=True)
 @click.argument('target')
-def rdp(target, verbose):
+def rdp(target, verbose, debug):
     
     # Setting up our console logging
     with console.status("[bold green]RD Web Module Executing...") as status:
 
         if verbose:
+            logging.basicConfig(level='INFO', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
+            # status.stop()
+            log.info("Verbose logging enabled for module: rdp")
+
+        if debug:
             logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
-            log.debug("Verbose logging enabled for module: rdp")
+            log.debug("Debug logging enabled for module: rdp")
 
         # First trying to find if an RD Web server exists
         rdpw_endpoint = rdpw_find(target)
@@ -112,17 +126,24 @@ def rdp(target, verbose):
 
 @click.command()
 @click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.option('-vv','--debug', default=False, required=False, show_default=True, is_flag=True)
 @click.argument('target')
-def adfs(target, verbose):
+def adfs(target, verbose, debug):
     
     # Setting up our console logging
     with console.status("[bold green]ADFS Module Executing...") as status:
 
         if verbose:
+            logging.basicConfig(level='INFO', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
+            # status.stop()
+            log.info("Verbose logging enabled for module: adfs")
+
+        if debug:
             logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
-            log.debug("Verbose logging enabled for module: adfs")
+            log.debug("Debug logging enabled for module: adfs")
 
         # First trying to find if an ADFS server exists
         adfs_endpoint = adfs_find(target)
@@ -161,17 +182,24 @@ def adfs(target, verbose):
 
 @click.command()
 @click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.option('-vv','--debug', default=False, required=False, show_default=True, is_flag=True)
 @click.argument('target')
-def skype(target, verbose):
+def skype(target, verbose, debug):
     
     # Setting up our console logging                                                           
     with console.status("[bold green]Skype for Business Module Executing...") as status:       
 
         if verbose:
+            logging.basicConfig(level='INFO', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            log = logging.getLogger("rich")
+            # status.stop()
+            log.info("Verbose logging enabled for module: skype")
+
+        if debug:
             logging.basicConfig(level='DEBUG', format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
-            log.debug("Verbose logging enabled for module: skype")
+            log.debug("Debug logging enabled for module: skype")
 
         # First trying to find if an SFB server exists
         sfb_endpoint = sfb_find(target)
@@ -207,9 +235,10 @@ def skype(target, verbose):
 
 @click.command()
 @click.option('-v','--verbose', default=False, required=False, show_default=True, is_flag=True)
+@click.option('-vv','--debug', default=False, required=False, show_default=True, is_flag=True)
 @click.argument('target')
 @click.pass_context
-def full(ctx, target, verbose):
+def full(ctx, target, verbose, debug):
     ctx.forward(exch)
     ctx.forward(rdp)
     ctx.forward(adfs)
