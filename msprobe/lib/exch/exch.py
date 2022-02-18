@@ -13,7 +13,7 @@ import pkg_resources
 
 # Defining logging, again
 logging.basicConfig(
-    level="NOTSET",
+    level="DEBUG",
     format="%(message)s",
     datefmt="[%X]",
     handlers=[RichHandler(rich_tracebacks=False)]
@@ -168,12 +168,15 @@ def exch_ntlm_pathfind(exch_endpoint):
         
         try:
             response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
+            log.debug(f"NTLM authentication is not possible: {url}")
             pass
         except response.status_code != 401:
+            log.debug(f"NTLM authentication is not possible: {url}")
             pass
         else:
             if response.status_code == 401:
+                log.debug(f"NTLM authentication is possible for: {url}")
                 ntlm_endpoints.append(url)
 
     return ntlm_endpoints
@@ -194,14 +197,11 @@ def exch_ntlm_parse(ntlm_endpoints):
             #ntlm_data.append(ntlm_info["DNS_Domain_name"])
             return ntlm_data
     except Exception as a:
-        print('Something went wrong!')
-        print('The Exchange server is most likely redirecting to O365!')
-        print('OWA portal may still exist. Check with Nuclei!')
-        print(f'Error Message: {a}')
+        log.info(f'Something went wrong parsing NTLM data.')
+        log.debug(f'NTLM Parsing Error Message: {a}')
         pass
 
 def exch_display(exch_endpoint, owa_exists, ecp_exists, exch_version, exch_ntlm_paths, exch_ntlm_info):
-    
 
     console = Console()
     table_exch = Table(show_header=False, pad_edge=True)
