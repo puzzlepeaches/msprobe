@@ -1,5 +1,6 @@
 import re
 import requests 
+import logging
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from urllib.parse import urlparse
@@ -7,7 +8,19 @@ from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
+from rich.logging import RichHandler
 import pkg_resources 
+
+# Defining logging, again
+logging.basicConfig(
+    level="NOTSET",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=False)]
+)
+
+log = logging.getLogger("rich")
+
 
 
 # Dealing with SSL Warnings
@@ -49,7 +62,8 @@ def exch_find(target):
         try:
             response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
 
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
+            log.debug(f"Failed to reach: {url}")
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
