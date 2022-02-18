@@ -61,21 +61,25 @@ def exch_find(target):
         url = f'https://{i}.{target}'
         try:
             response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-
         except requests.exceptions.RequestException:
             log.debug(f"Failed to reach: {url}")
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
             try:
+                log.debug(f"Resolves and has a web service availible: {url}")
                 location_header = urlparse(response.headers["Location"])
                 url_path = location_header.path
                 redirect_location = url_path.strip('/').split('/')[0]
             except KeyError:
+                log.debug(f"Couldn't find Location header for: {url}") 
+                log.debug(f"Not actually Exchange")
                 pass
             else:
                 # If the redirect URL specified in Location header contains OWA, indicate that we found Exchange
                 if redirect_location == "owa":
+                    log.debug(f"Redirect location OWA for: {url}")
+
                     return url
 
 
@@ -84,8 +88,8 @@ def exch_find(target):
 def find_owa(exch_endpoint):
     try:
         r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
-    except requests.ConnectionError:
-        return False
+    except requests.exceptions.RequestException:
+         log.debug(f"Failed to reach OWA: {exch_endpoint}/owa")
     else:
         if r.status_code == 200:
            return True
@@ -94,8 +98,8 @@ def find_owa(exch_endpoint):
 def find_ecp(exch_endpoint):
     try:
         r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
-    except requests.ConnectionError:
-        return False
+    except requests.exceptions.RequestException:
+         log.debug(f"Failed to reach EAC: {exch_endpoint}/ecp")
     else: 
         if r.status_code == 200:
            return True
@@ -109,9 +113,9 @@ def find_version(exch_endpoint, owa, ecp):
     if owa == True:
         try:
             owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
-        except requests.ConnectionError:
-            print('Something went wrong determining version!')
-            exit()
+        except requests.exceptions.RequestException:
+            log.debug(f"Couldn't determine version for: {exch_endpoint}/owa")
+            pass
         else:
             try:
                 soup = BeautifulSoup(owa_response.text, 'html.parser')
@@ -120,15 +124,17 @@ def find_version(exch_endpoint, owa, ecp):
                 exchange_version = ''.join(find_version)
                 return exchange_version
             except TypeError:
+                log.debug("The build number wasn't found. Setting to UNKOWN")
                 exchange_version = 'UNKNOWN'
                 return exchange_version
+
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
             ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
-        except requests.ConnectionError:
-            print('Something went wrong determining version!')
-            exit()
+        except requests.exceptions.RequestException:
+            log.debug(f"Couldn't determine version from: {exch_endpoint}/ecp")
+            pass
         else:
             try:
                 soup = BeautifulSoup(ecp_response.text, 'html.parser')
@@ -137,12 +143,14 @@ def find_version(exch_endpoint, owa, ecp):
                 exchange_version = ''.join(find_version)
                 return exchange_version
             except TypeError:
+                log.debug("The build number wasn't found. Setting to UNKOWN")
                 exchange_version = 'UNKNOWN'
                 return exchange_version
 
     # Not sure what happened, returning UNKNOWN
     else:
         exchange_version = "UNKOWN"
+        log.debug("The build number wasn't found. Setting to UNKOWN")
         return exchange_version
 
 def exch_ntlm_pathfind(exch_endpoint):
