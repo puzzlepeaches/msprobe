@@ -8,6 +8,9 @@ from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
 import pkg_resources
+#import logging
+#
+#logging.getLogger(requests.packages.urllib3.__package__).setLevel(logging.ERROR)
 
 # Dealing with SSL Warnings
 try:

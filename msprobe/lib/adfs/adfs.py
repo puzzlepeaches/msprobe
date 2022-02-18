@@ -9,7 +9,6 @@ from rich.console import Console
 from rich.table import Table
 import pkg_resources
 
-
 # Dealing with SSL Warnings
 try:
     import requests.packages.urllib3

@@ -7,3 +7,5 @@
 - error handling added specifically for exch redirect to O365 situation
 - add output file and logging functionality
 - allow -v or -vv for info or debug (info will just be messages we add manually to modules)
+- integrate DNS and CDN checker
+- exclude cloud ranges to reduce false positives https://github.com/0xZDH/redirect.rules/tree/master/core/sources
