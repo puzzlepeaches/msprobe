@@ -1,4 +1,5 @@
 import requests
+import logging
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import hashlib
@@ -7,7 +8,18 @@ from bs4 import BeautifulSoup
 from .ntlm import ntlmdecode
 from rich.console import Console
 from rich.table import Table
+from rich.logging import RichHandler
 import pkg_resources
+
+# Defining logging, again
+logging.basicConfig(
+    level="DEBUG",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[RichHandler(rich_tracebacks=False)]
+)
+
+log = logging.getLogger("rich")
 
 # Dealing with SSL Warnings
 try:
@@ -46,11 +58,13 @@ def rdpw_find(target):
         url = f'https://{i}.{target}/RDWeb/Pages/en-US/login.aspx'
         try:
             response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
+            log.debug(f"[bold red]Failed to reach: {url}[/]", extra={"markup": True})
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
             try:
+                log.debug(f"Found potential instance: {url}")
                 soup = BeautifulSoup(response.text, 'html.parser')
                 content = soup.get_text()
             except Exception:
@@ -59,6 +73,7 @@ def rdpw_find(target):
 
                 # If specified text in output, it is a vlid RD Web Access portal
                 if "RD Web Access" in content: 
+                    log.debug(f"[bold green]Found indicator of RD Web in HTML for: {url}[/]", extra={"markup": True})
 
                     # Stripping the appended path from the url variable
                     url = f'https://{urlparse(url).hostname}'
@@ -91,19 +106,24 @@ def rdpw_find_version(url):
         # Making sure we got a legit png
         if response.status_code == 200:
             if 'Content-Type' in response.headers and response.headers['Content-Type'] == "image/png":
+                log.debug(f"Requesting PNG at: {image}")
 
                 # Getting the sha256 hash for the returned image
+                log.debug(f"Hashing PNG to get windows server version.")
                 image_hash = hashlib.sha256(response.content).hexdigest()
-                
+                log.debug(f"Image hash found: {image_hash}.")
+
                 # Finding the hash in the dic defined above
                 if image_hash in known_hashes.keys():
                     version = known_hashes[image_hash]
+                    log.debug(f"Version of Windows Server found: {version}")
 
                     # Returning the version if found
                     return version
 
     # Else, if an exception is thrown we are going to return the value UNKOWN 
     except Exception:
+        log.debug(f"Something went wrong determining version. Setting to UNKOWN")
         version = 'UNKNOWN'
         return version
 
@@ -131,6 +151,10 @@ def rdpw_get_info(url):
         # Issuing request and parsing out all form values containing input
         try:
             response = requests_retry_session().get(info_url, allow_redirects=False, verify=False, timeout=5)
+#        except requests.exceptions.RequestException:
+#            log.debug("Connection failed for unkown reason. Run again.")
+#
+#        else:
             soup = BeautifulSoup(response.content, "lxml")
             form = soup.find('form', attrs={"id": "FrmLogin"})
             inputs = form.findAll('input')
@@ -160,6 +184,7 @@ def rdpw_get_info(url):
                                         value = i['value']
 
                                         # Throwing this into an array because my brain doesn't understand dicts yet
+                                        log.debug(f"Found some info: {b} - {value}")
                                         rdpweb_data.append(b)
                                         rdpweb_data.append(value)
             return rdpweb_data
@@ -173,10 +198,11 @@ def rdpw_ntlm_pathfind(url):
 
     try:
         response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         pass
     else:
           if response.status_code == 401:
+              log.debug(f"Found NTLM authentication path: {url}")
               return True
 
 def rdpw_ntlm_parse(url):
@@ -195,7 +221,9 @@ def rdpw_ntlm_parse(url):
             ntlm_data.append(ntlm_info["DNS_Domain_name"])
             return ntlm_data
     except Exception as a:
-        print(f'Error occured: {a}')
+        log.info(f'Something went wrong parsing NTLM data.')
+        log.debug(f'NTLM Parsing Error Message: {a}')
+        pass
 
 def rdpw_display(rdpw_endpoint, rdpw_version, rdpw_info, rdpw_ntlm_path, rdpw_ntlm_info):
     console = Console()

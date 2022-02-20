@@ -62,12 +62,12 @@ def exch_find(target):
         try:
             response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
         except requests.exceptions.RequestException:
-            log.debug(f"Failed to reach: {url}")
+            log.debug(f"[bold red]Failed to reach: {url}[/]", extra={"markup": True})
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
             try:
-                log.debug(f"Resolves and has a web service availible: {url}")
+                log.debug(f"[bold green]Resolves and has a web service availible: {url}[/]", extra={"markup": True})
                 location_header = urlparse(response.headers["Location"])
                 url_path = location_header.path
                 redirect_location = url_path.strip('/').split('/')[0]
