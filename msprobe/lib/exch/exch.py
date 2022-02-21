@@ -1,5 +1,6 @@
 import re
 import requests 
+import logging
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from urllib.parse import urlparse
@@ -47,9 +48,9 @@ def exch_find(target):
     for i in sd:
         url = f'https://{i}.{target}'
         try:
-            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
 
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
@@ -69,8 +70,8 @@ def exch_find(target):
 # Checking if OWA pannel is availible 
 def find_owa(exch_endpoint):
     try:
-        r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
-    except requests.ConnectionError:
+        r = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=1, allow_redirects=True, verify=False)
+    except requests.exceptions.RequestException:
         return False
     else:
         if r.status_code == 200:
@@ -79,8 +80,8 @@ def find_owa(exch_endpoint):
 # Checking if ECP pannel is availible 
 def find_ecp(exch_endpoint):
     try:
-        r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
-    except requests.ConnectionError:
+        r = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=1, allow_redirects=True, verify=False)
+    except requests.exceptions.RequestException:
         return False
     else: 
         if r.status_code == 200:
@@ -94,8 +95,8 @@ def find_version(exch_endpoint, owa, ecp):
     # If OWA is availible we will try to grab it from there
     if owa == True:
         try:
-            owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=5, allow_redirects=True, verify=False)
-        except requests.ConnectionError:
+            owa_response = requests_retry_session().get(f'{exch_endpoint}/owa', timeout=1, allow_redirects=True, verify=False)
+        except requests.exceptions.RequestException:
             print('Something went wrong determining version!')
             exit()
         else:
@@ -111,8 +112,8 @@ def find_version(exch_endpoint, owa, ecp):
     # If ECP is availible we will try to grab it from there
     elif ecp == True:
         try:
-            ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=5, allow_redirects=True, verify=False)
-        except requests.ConnectionError:
+            ecp_response = requests_retry_session().get(f'{exch_endpoint}/ecp', timeout=1, allow_redirects=True, verify=False)
+        except requests.exceptions.RequestException:
             print('Something went wrong determining version!')
             exit()
         else:
@@ -145,8 +146,8 @@ def exch_ntlm_pathfind(exch_endpoint):
         url = f'{exch_endpoint}/{i}'
         
         try:
-            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-        except requests.ConnectionError:
+            response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
+        except requests.exceptions.RequestException:
             pass
         except response.status_code != 401:
             pass

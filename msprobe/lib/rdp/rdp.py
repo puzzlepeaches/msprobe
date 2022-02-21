@@ -45,8 +45,8 @@ def rdpw_find(target):
     for i in sd:
         url = f'https://{i}.{target}/RDWeb/Pages/en-US/login.aspx'
         try:
-            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-        except requests.ConnectionError:
+            response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
+        except requests.exceptions.RequestException:
             pass
         else:
             # Method for checking if discovered site is actually an Exchange instance
@@ -86,7 +86,7 @@ def rdpw_find_version(url):
     image = f'{url}/RDWeb/Pages/images/WS_h_c.png'
 
     try:
-        response = requests_retry_session().get(image, allow_redirects=True, verify=False, timeout=5)
+        response = requests_retry_session().get(image, allow_redirects=True, verify=False, timeout=1)
         
         # Making sure we got a legit png
         if response.status_code == 200:
@@ -130,7 +130,7 @@ def rdpw_get_info(url):
 
         # Issuing request and parsing out all form values containing input
         try:
-            response = requests_retry_session().get(info_url, allow_redirects=False, verify=False, timeout=5)
+            response = requests_retry_session().get(info_url, allow_redirects=False, verify=False, timeout=1)
             soup = BeautifulSoup(response.content, "lxml")
             form = soup.find('form', attrs={"id": "FrmLogin"})
             inputs = form.findAll('input')
@@ -172,8 +172,8 @@ def rdpw_ntlm_pathfind(url):
     url = f'{url}/rpc'
 
     try:
-        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
-    except requests.ConnectionError:
+        response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
+    except requests.exceptions.RequestException:
         pass
     else:
           if response.status_code == 401:

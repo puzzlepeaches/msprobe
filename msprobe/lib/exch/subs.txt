@@ -1,4 +1,3 @@
-mail
 webmail
 owa
 email
@@ -25,3 +24,4 @@ pop3
 post
 post1
 post2
+mail

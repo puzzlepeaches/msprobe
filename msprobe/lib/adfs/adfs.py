@@ -50,9 +50,9 @@ def adfs_find(target):
 
         try:
             # Issuing request to URL
-            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False) 
+            response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False) 
 
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
             pass
 
         else:
@@ -73,9 +73,9 @@ def adfs_find_version(adfs_endpoint):
 
     try:
         # Issuing request to URL
-        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
 
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         pass
 
     else:
@@ -112,9 +112,9 @@ def adfs_find_services(adfs_endpoint):
     try: 
 
         # Issuing request
-        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
 
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         pass
 
     else:
@@ -162,9 +162,9 @@ def find_adfs_pwreset(adfs_endpoint):
 
     try:
         # Issuing request
-        response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+        response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
 
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         pass
 
     else:
@@ -195,9 +195,9 @@ def adfs_ntlm_pathfind(adfs_endpoint):
 
             # Crafint our URL and issuing request
             url = f'{adfs_endpoint}{e}'
-            response = requests_retry_session().get(url, timeout=5, allow_redirects=False, verify=False)
+            response = requests_retry_session().get(url, timeout=1, allow_redirects=False, verify=False)
 
-        except requests.ConnectionError:
+        except requests.exceptions.RequestException:
             pass
 
         else:
@@ -215,7 +215,7 @@ def adfs_ntlm_parse(adfs_ntlm_paths):
     try:
         ntlm_header = {"Authorization": "NTLM TlRMTVNTUAABAAAAB4IIogAAAAAAAAAAAAAAAAAAAAAGAbEdAAAADw=="}
         response = requests_retry_session().post(adfs_ntlm_paths[0], headers=ntlm_header, verify=False, allow_redirects=True)
-    except requests.ConnectionError:
+    except requests.exceptions.RequestException:
         pass
 
     try:

@@ -24,7 +24,7 @@ def exch(target, verbose):
     with console.status("[bold green]Exchange Module Executing...") as status:
 
         if verbose:
-            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=False, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
             log.debug("Verbose logging enabled for module: exch")
@@ -74,7 +74,7 @@ def rdp(target, verbose):
     with console.status("[bold green]RD Web Module Executing...") as status:
 
         if verbose:
-            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=False, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
             log.debug("Verbose logging enabled for module: rdp")
@@ -119,7 +119,7 @@ def adfs(target, verbose):
     with console.status("[bold green]ADFS Module Executing...") as status:
 
         if verbose:
-            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            logging.basicConfig(level='DEBUG', format="%(message)s", handlers=[RichHandler(rich_tracebacks=False, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
             log.debug("Verbose logging enabled for module: adfs")
@@ -168,7 +168,7 @@ def skype(target, verbose):
     with console.status("[bold green]Skype for Business Module Executing...") as status:       
 
         if verbose:
-            logging.basicConfig(level='DEBUG', format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True, show_time=False)])
+            logging.basicConfig(level='DEBUG', format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=False, show_time=False)])
             log = logging.getLogger("rich")
             status.stop()
             log.debug("Verbose logging enabled for module: skype")
