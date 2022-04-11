@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
- 
-from lib.cli import *
 
-if __name__ == '__main__':
-    cli() 
+from .lib.cli import *
+
+if __name__ == "__main__":
+    cli()

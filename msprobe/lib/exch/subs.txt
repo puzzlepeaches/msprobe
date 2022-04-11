@@ -25,3 +25,4 @@ post
 post1
 post2
 mail
+remote
