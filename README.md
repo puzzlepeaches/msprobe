@@ -7,8 +7,14 @@
 + [Acknowledgements](#acknowledgements)
 
 
+
 ## About <a name = "about"></a>
 Finding all things on-prem Microsoft for password spraying and enumeration. 
+
+
+
+
+
 
 ### Installing <a name = "installing"></a>
 
@@ -17,6 +23,9 @@ Install the project using [pipx](https://pypa.github.io/pipx/installation/)
 ```
 pipx install git+https://github.com/puzzlepeaches/msprobe.git
 ```
+
+
+
 
 ## Usage <a name = "usage"></a>
 
@@ -46,6 +55,8 @@ Commands:
 ```
 
 
+
+
 ## Examples <a name = "examples"></a>
 
 Find ADFS servers associated with apex domain:
@@ -65,6 +76,8 @@ Find all Microsoft products hostsed on-prem for a domain:
 ```
 msprobe full acme.com
 ```
+
+
 
 
 ## Acknowledgements <a name = "acknowledgements"></a>
