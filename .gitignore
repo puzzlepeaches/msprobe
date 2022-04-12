@@ -128,6 +128,6 @@ dmypy.json
 .pyre/
 
 # TODO.md
-TODO.md
+TODO.*
 
 *.swp
