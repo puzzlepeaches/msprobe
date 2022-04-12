@@ -1,11 +1,11 @@
 # msprobe
 
-## Table of Contents
 + [About](#about)
 + [Installing](#installing)
 + [Usage](#usage)
 + [Examples](#examples)
 + [Acknowledgements](#acknowledgements)
+
 
 ## About <a name = "about"></a>
 Finding all things on-prem Microsoft for password spraying and enumeration. 
@@ -26,7 +26,6 @@ The tool has four different modules that assist with the discovery of on-prem Mi
 * RD Web
 * ADFS
 * Skype for Business
-
 
 The help menu and supported modules are shown below:
 
