@@ -10,18 +10,24 @@ from rich.logging import RichHandler
 # Initializing console for rich
 console = Console()
 
+# Setting context settings for click
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help", "help"])
+
 
 @click.group()
 def cli():
+    """Find Microsoft Exchange, RD Web, ADFS, and Skype instances"""
     pass
 
 
-@click.command()
+@click.command(no_args_is_help=True, context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-v", "--verbose", default=False, required=False, show_default=True, is_flag=True
 )
 @click.argument("target")
 def exch(target, verbose):
+
+    """Find Microsoft Exchange servers"""
 
     # Setting up our console logging
     with console.status("[bold green]Exchange Module Executing...") as status:
@@ -78,12 +84,14 @@ def exch(target, verbose):
             status.stop()
 
 
-@click.command()
+@click.command(no_args_is_help=True, context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-v", "--verbose", default=False, required=False, show_default=True, is_flag=True
 )
 @click.argument("target")
 def rdp(target, verbose):
+
+    """Find Microsoft RD Web servers"""
 
     # Setting up our console logging
     with console.status("[bold green]RD Web Module Executing...") as status:
@@ -129,12 +137,14 @@ def rdp(target, verbose):
             status.stop()
 
 
-@click.command()
+@click.command(no_args_is_help=True, context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-v", "--verbose", default=False, required=False, show_default=True, is_flag=True
 )
 @click.argument("target")
 def adfs(target, verbose):
+
+    """Find Microsoft ADFS servers"""
 
     # Setting up our console logging
     with console.status("[bold green]ADFS Module Executing...") as status:
@@ -190,12 +200,14 @@ def adfs(target, verbose):
             status.stop()
 
 
-@click.command()
+@click.command(no_args_is_help=True, context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-v", "--verbose", default=False, required=False, show_default=True, is_flag=True
 )
 @click.argument("target")
 def skype(target, verbose):
+
+    """Find Microsoft Skype servers"""
 
     # Setting up our console logging
     with console.status("[bold green]Skype for Business Module Executing...") as status:
@@ -251,13 +263,16 @@ def skype(target, verbose):
             status.stop()
 
 
-@click.command()
+@click.command(no_args_is_help=True, context_settings=CONTEXT_SETTINGS)
 @click.option(
     "-v", "--verbose", default=False, required=False, show_default=True, is_flag=True
 )
 @click.argument("target")
 @click.pass_context
 def full(ctx, target, verbose):
+
+    """Find all Microsoft supported by msprobe"""
+
     ctx.forward(exch)
     ctx.forward(rdp)
     ctx.forward(adfs)
