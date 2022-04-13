@@ -247,6 +247,7 @@ def rdpw_display(
     table_rdpw.add_column("Info")
 
     table_rdpw.add_row("URL", f"{rdpw_endpoint}")
+
     table_rdpw.add_row("VERSION", f"{rdpw_version}")
 
     table_rdpw.add_row("DOMAIN", f"{rdpw_ntlm_info[0]}")
@@ -255,7 +256,8 @@ def rdpw_display(
     if rdpw_ntlm_path is True:
         table_rdpw.add_row("NTLM RPC", "True")
 
-    for i, k in zip(rdpw_info[0::2], rdpw_info[1::2]):
-        table_rdpw.add_row(f"{i}", f"{k}")
+    if rdpw_info is not None:
+        for i, k in zip(rdpw_info[0::2], rdpw_info[1::2]):
+            table_rdpw.add_row(f"{i}", f"{k}")
 
     console.print(table_rdpw)
