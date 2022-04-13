@@ -54,7 +54,7 @@ def rdpw_find(target):
         except requests.exceptions.RequestException:
             pass
         else:
-            # Method for checking if discovered site is actually an Exchange instance
+            # Method for checking if discovered site is actually an RD Web instance
             try:
                 soup = BeautifulSoup(response.text, "html.parser")
                 content = soup.get_text()
@@ -164,7 +164,7 @@ def rdpw_get_info(url):
             response = requests_retry_session().get(
                 info_url, allow_redirects=False, verify=False, timeout=1
             )
-            soup = BeautifulSoup(response.content, "lxml")
+            soup = BeautifulSoup(response.content, "lxml", features="xml")
             form = soup.find("form", attrs={"id": "FrmLogin"})
             inputs = form.findAll("input")
 
