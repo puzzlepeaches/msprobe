@@ -11,9 +11,9 @@
 ## About <a name = "about"></a>
 Finding all things on-prem Microsoft for password spraying and enumeration. 
 
+![FLqt1cWXEAklMP1](https://user-images.githubusercontent.com/8538866/163191875-61040ed3-b318-4ad4-97c1-c06fb3f7eeba.jpeg)
 
-
-
+The tool will used a list of common subdomains associated with your target apex domain to attempt to discover valid instances of on-prem Microsoft solutions.
 
 
 ### Installing <a name = "installing"></a>
@@ -83,3 +83,5 @@ msprobe full acme.com
 ## Acknowledgements <a name = "acknowledgements"></a>
 - [@p0dalirius](https://twitter.com/intent/follow?screen_name=podalirius_) for [RDWArecon](https://github.com/p0dalirius/RDWArecon) 
 - [@b17zr](https://twitter.com/b17zr) for the `ntlm_challenger.py` script
+- [@ReverendThing](https://github.com/ReverendThing) for his project [Carnivore](https://github.com/ReverendThing/Carnivore) and it's included subdomains
+- [@busterbcook](https://twitter.com/busterbcook) and their tool [msmailprobe](https://github.com/busterb/msmailprobe) heavily influenced the creation of this project 
