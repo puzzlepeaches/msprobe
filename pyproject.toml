@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "msprobe"
-version = "0.1.0"
+version = "0.1.1"
 description = "Finding all things on-prem MS"
 authors = ["puzzlepeaches"]
 
@@ -10,6 +10,7 @@ click = "^8.1.2"
 requests = "^2.27.1"
 bs4 = "^0.0.1"
 rich = "^12.2.0"
+lxml = "^4.8.0"
 
 [tool.poetry.dev-dependencies]
 
