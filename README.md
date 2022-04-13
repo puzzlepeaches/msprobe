@@ -9,12 +9,12 @@
 
 
 ## About <a name = "about"></a>
+
 Finding all things on-prem Microsoft for password spraying and enumeration. 
 
+The tool will used a list of common subdomains associated with your target apex domain to attempt to discover valid instances of on-prem Microsoft solutions. Screenshots of the tool in action are below:
+
 ![FLqt1cWXEAklMP1](https://user-images.githubusercontent.com/8538866/163191875-61040ed3-b318-4ad4-97c1-c06fb3f7eeba.jpeg)
-
-The tool will used a list of common subdomains associated with your target apex domain to attempt to discover valid instances of on-prem Microsoft solutions.
-
 
 ### Installing <a name = "installing"></a>
 
