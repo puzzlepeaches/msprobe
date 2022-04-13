@@ -28,4 +28,3 @@ remotegateway
 tsweb
 vdesktop
 vdi
-cp-eusa-03
