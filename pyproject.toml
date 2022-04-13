@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "msprobe"
-version = "0.1.1"
-description = "Finding all things on-prem MS"
+version = "0.1.2"
+description = "Finding all things on-prem MS!"
 authors = ["puzzlepeaches"]
 
 [tool.poetry.dependencies]
