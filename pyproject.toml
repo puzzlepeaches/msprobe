@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "msprobe"
-version = "0.1.2"
+version = "0.1.3"
 description = "Finding all things on-prem MS!"
 authors = ["Nicholas A <nicholasanastasirepair@gmail.com>"]
 readme = "README.md"
