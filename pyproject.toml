@@ -2,7 +2,12 @@
 name = "msprobe"
 version = "0.1.2"
 description = "Finding all things on-prem MS!"
-authors = ["puzzlepeaches"]
+authors = ["Nicholas A <nicholasanastasirepair@gmail.com>"]
+readme = "README.md"
+license = "BSD 3-Clause"
+homepage = "https://github.com/puzzlpeaches/msprobe"
+repository = "https://github.com/puzzlepeaches/msprobe"
+include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
