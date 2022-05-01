@@ -22,10 +22,8 @@ The tool will used a list of common subdomains associated with your target apex 
 Install the project using [pipx](https://pypa.github.io/pipx/installation/)
 
 ```
-pipx install git+https://github.com/puzzlepeaches/msprobe.git
+pipx install msprobe 
 ```
-
-
 
 
 ## Usage <a name = "usage"></a>
