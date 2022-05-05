@@ -4,6 +4,7 @@
 + [Installing](#installing)
 + [Usage](#usage)
 + [Examples](#examples)
++ [Coming Soon](#coming)
 + [Acknowledgements](#acknowledgements)
 
 
@@ -23,8 +24,6 @@ Install the project using [pipx](https://pypa.github.io/pipx/installation/)
 ```
 pipx install git+https://github.com/puzzlepeaches/msprobe.git
 ```
-
-
 
 
 ## Usage <a name = "usage"></a>
@@ -77,7 +76,9 @@ Find all Microsoft products hostsed on-prem for a domain:
 msprobe full acme.com
 ```
 
-
+## Coming Soon <a name = "coming"></a>
+- Full wiki for each module
+- Fixes for lxml based parsing in RD Web module
 
 
 ## Acknowledgements <a name = "acknowledgements"></a>
